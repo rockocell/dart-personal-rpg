@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'dart:convert';
 import 'package:pp_rpg_game/game.dart';
 
 void main() async {
@@ -6,6 +8,25 @@ void main() async {
   game.startGame();
 
   while (game.isStart == true) {
+    //캐릭터 이름 입력
+    while (true) {
+      print('캐릭터의 이름을 입력하세요: ');
+      var input = stdin.readLineSync(encoding: Encoding.getByName('utf-8')!);
+
+      ///정규표현식으로 사용자 이름이 적절한지 확인
+      if (input != null) {
+        RegExp pattern = RegExp(r'^[가-힣a-zA-Z\s]+$');
+        bool isValid = pattern.hasMatch(input); // 포함되어 있으면 false, 없으면 true
+        if (isValid == true) {
+          break;
+        } else {
+          print('캐릭터 이름 형식이 올바르지 않습니다.');
+          print('영어 소문자, 영어 대문자, 한글만 입력 가능합니다.');
+          continue;
+        }
+      }
+    }
+
     print('게임을 시작합니다!');
     await game.makePlayerChar();
     await game.makeMonList();
