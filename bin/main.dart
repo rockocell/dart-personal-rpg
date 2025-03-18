@@ -1,16 +1,18 @@
 import 'dart:io';
-import 'dart:convert';
+import 'package:pp_rpg_game/character.dart';
+import 'package:pp_rpg_game/monster.dart';
+import 'package:pp_rpg_game/game.dart';
 
 void main() async {
-  var file = File('assets/monsters.csv');
+  ///캐릭터, 몬스터리스트 default값 생성
+  List<Monster> monList = [];
+  Game game = Game();
 
-  Stream<String> lines = file.openRead().transform(utf8.decoder);
-  try {
-    await for (var line in lines) {
-      print('$line: ${line.length} characters');
-    }
-    print('File is now closed.');
-  } catch (e) {
-    print('Error: $e');
+  game.startGame();
+
+  while (game.isStart == true) {
+    print('게임을 시작합니다!');
+    print('게임을 종료합니다!');
+    game.isStart = false;
   }
 }
