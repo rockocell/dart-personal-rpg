@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
+import 'dart:math';
 import 'package:pp_rpg_game/character.dart';
 import 'package:pp_rpg_game/monster.dart';
 
@@ -11,6 +12,8 @@ class Game {
 
   Character player = Character('name', 1, 1, 1);
   List<Monster> monList = [];
+
+  Monster currentMon = Monster('', 1, 1);
 
   void startGame() {
     isStart = true;
@@ -38,7 +41,10 @@ class Game {
     } catch (e) {
       print('Error: $e');
     }
-    print('${player.hp}, ${player.atk}, ${player.def}');
+  }
+
+  getPlayerChar() {
+    return player;
   }
 
   ///파일에서 몬스터 정보 가져와 리스트화
@@ -59,10 +65,24 @@ class Game {
           int.parse(monInfo[1]),
           int.parse(monInfo[2]),
         );
+
+        ///몬스터 maxAtk 이용해서 랜덤 atk 설정하기
+        ///
+        Random random = Random();
+        int atk = random.nextInt(monster.maxAtk - player.def + 1) + player.def;
+        monster.atk = atk;
+
         monList.add(monster);
       }
     } catch (e) {
       print('Error: $e');
     }
+  }
+
+  getRandomMonster() {
+    print('새로운 몬스터가 나타났습니다!');
+    int currentMonIndex = Random().nextInt(monList.length);
+    currentMon = monList[currentMonIndex];
+    print('${currentMon.name} - 체력: ${currentMon.hp}, 공격력: ${currentMon.atk}');
   }
 }
