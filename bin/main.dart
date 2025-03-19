@@ -32,12 +32,16 @@ void main() async {
         }
       }
     }
+
+    ///캐릭터 이름 입력 종료
+
     print('게임을 시작합니다!');
     print(
       '${game.player.name} - 체력: ${game.player.hp}, 공격력: ${game.player.atk}, 방어력: ${game.player.def}',
     );
     game.getRandomMonster();
-    game.player.attackMonster(game.currentMon);
+    game.player.attackMon(game.currentMon);
+    game.currentMon.attackChar(game.player);
     print('게임을 종료합니다!');
     game.isStart = false;
   }

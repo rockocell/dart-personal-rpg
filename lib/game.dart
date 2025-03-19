@@ -17,9 +17,6 @@ class Game {
 
   void startGame() {
     isStart = true;
-
-    ///while문으로 종료조건 넣기
-    ///종료조건 충족 시 isStart false 변경, break;
   }
 
   ///파일에서 플레이어 정보 가져오기
