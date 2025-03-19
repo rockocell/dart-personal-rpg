@@ -9,22 +9,26 @@ class Monster {
 
   Monster(this.name, this.hp, this.maxAtk);
 
-  void attackChar(Character character) {
-    CharStatus status = character.currentStatus;
-    switch (status) {
-      case CharStatus.idle:
-        print('플레이어는 idle 상태입니다.');
-        break;
-      case CharStatus.defend:
-        print('플레이어는 defend 상태입니다.');
-        break;
-      case CharStatus.dead:
-        print('플레이어는 dead 상태입니다.');
-        break;
+  void attackChar(Character character) async {
+    int damage = atk - character.def;
+    print('$name의 턴');
+    print('$name이 ${character.name}을 공격했습니다!');
+    character.hp = character.hp - damage;
+    print(
+      '${character.name}(이)가 $damage의 피해를 입었습니다! ${character.name} hp: ${character.hp}',
+    );
+  }
+
+  void showStatus() {
+    print('$name - 체력 : $hp, 공격력 : $atk');
+  }
+
+  checkIsDead() {
+    if (hp <= 0) {
+      hp = 0;
+      return true;
+    } else {
+      return false;
     }
-    // character.hp = character.hp - (atk - character.def);
-    //   print(
-    //     '${character.name}(이)가 ${atk - character.def}의 피해를 입었습니다! ${character.name} hp: ${character.hp}',
-    //   );
   }
 }
