@@ -9,14 +9,11 @@ class Monster {
 
   Monster(this.name, this.hp, this.maxAtk);
 
-  void attackChar(Character character) async {
+  void attackChar(Character character) {
     int damage = atk - character.def;
     print('$name의 턴');
-    print('$name이 ${character.name}을 공격했습니다!');
     character.hp = character.hp - damage;
-    print(
-      '${character.name}(이)가 $damage의 피해를 입었습니다! ${character.name} hp: ${character.hp}',
-    );
+    print('$name(이)가 ${character.name}에게 $damage의 데미지를 입혔습니다!');
   }
 
   void showStatus() {

@@ -16,6 +16,9 @@ class Game {
 
   bool isPlayerDead = false;
 
+  ///게임 결과 관리
+  String result = '';
+
   Character player = Character('name', 1, 1, 1);
   List<Monster> monList = [];
 
@@ -102,6 +105,11 @@ class Game {
         isPlayerDead = true;
         break;
       }
+
+      ///여기까지 코드가 진행되면 한 턴이 완료됨
+      ///showStatus로 턴 결과 출력
+      player.showStatus();
+      currentMon.showStatus();
     }
   }
 
@@ -172,11 +180,43 @@ class Game {
   void endGame(isEnd, isWin) {
     if (isEnd) {
       if (isWin) {
+        result = '승리';
         print('축하합니다! 게임에서 승리했습니다.');
       } else {
-        print('게임을 중단합니다.');
+        result = '패배';
+        print('패배했습니다.');
+      }
+
+      ///결과 저장 확인
+      while (true) {
+        print('결과를 저장하시겠습니까? ( y / n )');
+        var input = stdin.readLineSync(encoding: Encoding.getByName('utf-8')!);
+        if (input == 'y') {
+          saveResult();
+          break;
+        } else if (input == 'n') {
+          print('저장하지 않습니다.');
+          break;
+        } else {
+          print('입력형식이 올바르지 않습니다.');
+          continue;
+        }
       }
       print('게임을 종료합니다.');
     } else {}
+  }
+
+  void saveResult() {
+    List resultList = [player.name, player.hp, result];
+
+    String filePath = 'assets/result.csv';
+    String csvData = '${resultList.join(',')}\n';
+    File file = File(filePath);
+    file.writeAsStringSync(
+      csvData,
+      mode: FileMode.write,
+      encoding: Encoding.getByName('utf-8')!,
+    );
+    print('결과가 저장되었습니다.');
   }
 }

@@ -35,9 +35,7 @@ class Character {
 
   void attackMon(Monster monster) {
     monster.hp = monster.hp - atk;
-    print(
-      '${monster.name}가 $atk의 피해를 입었습니다! ${monster.name} hp: ${monster.hp}',
-    );
+    print('$name(이)가 ${monster.name}에게 $atk의 피해를 입혔습니다!');
   }
 
   void defend() async {
