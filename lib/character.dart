@@ -14,8 +14,6 @@ class Character {
 
   Character(this.name, this.hp, this.atk, this.def);
 
-  bool isItemUsed = false;
-
   ///외부에서 생성된 Game 객체를 set 해주는 메서드
   void setGame(Game gameInstance) {
     game = gameInstance;
@@ -51,7 +49,7 @@ class Character {
     }
 
     ///현재 turnCount가 atkDoubleTurn과 동일하면 공격력 두 배 적용
-    if (game!.turnCount == game!.atkDoubleTurn) {
+    if (game!.totalTurnCount == game!.atkDoubleTurn) {
       monster.hp = monster.hp - atk * 2;
       print('아이템 효과 : 두 배의 공격력이 적용됩니다! 현재 공격력 : ${atk * 2}');
       print('$name(이)가 ${monster.name}에게 ${atk * 2}의 피해를 입혔습니다!');
