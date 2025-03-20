@@ -20,8 +20,6 @@ class Game {
   bool isEnd = false;
   bool isWin = false;
 
-  bool isPlayerDead = false;
-
   ///게임 결과 관리
   String result = '';
 
@@ -29,7 +27,6 @@ class Game {
 
   ///게임 턴, 아이템 관리
   int totalTurnCount = 1;
-  int atkDoubleTurn = 0;
   bool isItemUsed = false;
 
   ///class 내부 변수 선언 끝
@@ -107,7 +104,7 @@ class Game {
         if (isEnd) break;
         getRandomMon();
         battle();
-        if (isPlayerDead) break;
+        if (player.isDead) break;
 
         ///최종 승리수를 채웠다면 isEnd, isWin 값 변경 후 break;
         if (victory == requiredVictory) {
@@ -140,76 +137,37 @@ class Game {
     }
   }
 
-  void checkAction() {
-    while (true) {
-      print('${player.name}의 턴');
-      print('행동을 선택하세요: (1 : 공격, 2: 방어)');
-      var input = stdin.readLineSync(encoding: Encoding.getByName('utf-8')!);
-      if (input == '1') {
-        player.attackMon(currentMon);
-        break;
-      } else if (input == '2') {
-        player.defend();
-        break;
-      }
-      ///캐릭터 아이템 사용 기능 추가
-      else if (input == '3') {
-        ///아이템이 이미 사용됐는지 확인
-        if (!isItemUsed) {
-          isItemUsed = true;
-
-          ///다음 턴에서 공격력 2배 적용
-          atkDoubleTurn = totalTurnCount + 1;
-          print('공격력 증가 아이템을 사용했습니다!');
-          print('다음 턴에 공격력이 2배로 증가합니다.');
-          break;
-        } else {
-          print('아이템이 이미 사용되었습니다!');
-          continue;
-        }
-      } else {
-        print('입력형식이 올바르지 않습니다.');
-        continue;
-      }
-    }
-  }
-
   ///한 번의 전투를 구현하는 메서드
   ///
-  void battle() async {
+  void battle() {
     while (true) {
-      ///플레이어의 입력값 확인 및 입력에 따른 메서드 실행
-      checkAction();
+      player.checkIsDead();
+      if (!player.isDead) {
+        ///플레이어 턴
+        player.turnPlayer();
+      } else {
+        ///플레이어 사망 시
+        break;
+      }
+      currentMon.checkIsDead();
+      if (!currentMon.isDead) {
+        ///몬스터 턴
+        currentMon.turnMonster(player);
 
-      ///플레이어 턴이 끝나면 totalTurnCount 증가
-      totalTurnCount++;
-
-      ///몬스터 상태 체크 -- 몬스터가 죽었으면 리스트에서 제거, 승리 횟수 증가, 몬스터 턴 카운트 초기화, break
-      if (currentMon.checkIsDead()) {
+        ///플레이어, 몬스터 상태 출력
+        player.showStatus();
+        currentMon.showStatus();
+      } else {
+        ///몬스터 사망 시
         monList.remove(currentMon);
         victory++;
-        currentMon.countForMonDef = 1;
-        break;
-      } else {
-        //몬스터 살았으면 몬스터 턴
-        currentMon.attackChar(player);
-      }
-
-      ///몬스터 턴 끝나면 countForMonDef 증가
-      currentMon.countForMonDef++;
-
-      ///플레이어 상태 체크 -- 플레이어가 죽었으면 isDead 관리, break
-      if (player.checkIsDead()) {
-        isPlayerDead = true;
+        currentMon.monTurnCount = 1;
         break;
       }
-
-      ///showStatus로 턴 결과 출력
-      player.showStatus();
-      currentMon.showStatus();
     }
   }
 
+  ///랜덤 몬스터를 currenMonster 객체로 지정
   void getRandomMon() {
     print('새로운 몬스터가 나타났습니다!');
     int currentMonIndex = Random().nextInt(monList.length);
@@ -217,8 +175,10 @@ class Game {
     print('${currentMon.name} - 체력: ${currentMon.hp}, 공격력: ${currentMon.atk}');
   }
 
+  ///게임 종료 메서드
   void endGame(isEnd, isWin) {
     if (isEnd) {
+      ///게임 결과에 따라 다른 메시지 출력
       if (isWin) {
         result = '승리';
         print('축하합니다! 게임에서 승리했습니다.');
@@ -246,6 +206,7 @@ class Game {
     } else {}
   }
 
+  ///결과를 파일로 저장하는 메서드
   void saveResult() {
     List resultList = [player.name, player.hp, result];
 
@@ -260,12 +221,7 @@ class Game {
     print('결과가 저장되었습니다.');
   }
 
-  ///필수기능 메서드 끝
-  ///
-  ///
-  ///
-  ///도전기능 메서드 시작
-
+  ///게임 시작 시 30% 확률로 보너스 체력 얻는 메서드
   void randomAdditionalHp() {
     Random random = Random();
     int chance = random.nextInt(10);

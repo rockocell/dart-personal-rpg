@@ -8,9 +8,16 @@ class Character {
   int hp;
   int atk;
   int def;
+  bool isDead = false;
 
   //Game 객체 불러오기 -- 기본 : null
   Game? game;
+
+  ///특수턴 관리
+  int atkDoubleTurn = 0;
+  int defDoubleTurn = 0;
+  int initialAtk = 0;
+  int initialDef = 0;
 
   Character(this.name, this.hp, this.atk, this.def);
 
@@ -42,37 +49,125 @@ class Character {
     }
   }
 
-  void attackMon(Monster monster) {
+  ///플레이어의 한 턴
+  void turnPlayer() {
+    checkPlayerStatus();
+    executePlayerAction(() => getPlayerInput()); //입력에 따른 플레이어 액션 실행
+    game!.totalTurnCount++;
+  }
+
+  ///플레이어 상태 체크 -- 공격력 증가, 방어력 증가 확인
+  void checkPlayerStatus() {
+    /// 공격력 아이템 사용하는 턴인지 체크
+    if (game!.totalTurnCount == atkDoubleTurn) {
+      if (initialAtk == 0) {
+        // 원래 공격력 저장
+        initialAtk = atk;
+      }
+      atk = initialAtk * 2;
+    } else {
+      if (initialAtk != 0) {
+        // 원래 공격력 복구
+        atk = initialAtk;
+      }
+    }
+
+    ///방어력 증가한 턴인지 체크
+    if (game!.totalTurnCount == defDoubleTurn) {
+      if (initialDef == 0) {
+        // 원래 방어력 저장
+        initialDef = def;
+      }
+      def = initialDef * 2;
+    } else {
+      if (initialDef != 0) {
+        // 원래 방어력 복구
+        def = initialDef;
+      }
+    }
+  }
+
+  ///유저 입력 확인 -- return 값: 1 or 2 or 3 (int 타입)
+  getPlayerInput() {
+    while (true) {
+      print('$name의 턴');
+      print('행동을 선택하세요: (1 : 공격, 2: 방어 , 3: 아이템 사용)');
+      var input = stdin.readLineSync(encoding: Encoding.getByName('utf-8')!);
+      if (input == '1') {
+        return 1;
+      } else if (input == '2') {
+        return 2;
+      } else if (input == '3') {
+        ///아이템이 이미 사용됐는지 확인
+        if (game!.isItemUsed == false) {
+          game!.isItemUsed = true;
+          return 3;
+        } else {
+          print('아이템이 이미 사용되었습니다!');
+          continue;
+        }
+      } else {
+        print('입력형식이 올바르지 않습니다.');
+        continue;
+      }
+    }
+  }
+
+  ///입력값에 따른 플레이어 액션 실행
+  void executePlayerAction(int Function() getPlayer) {
+    int input = getPlayer();
     if (game == null) {
       print('오류: Game 인스턴스가 설정되지 않았습니다.');
       return;
     }
-
-    ///현재 turnCount가 atkDoubleTurn과 동일하면 공격력 두 배 적용
-    if (game!.totalTurnCount == game!.atkDoubleTurn) {
-      monster.hp = monster.hp - atk * 2;
-      print('아이템 효과 : 두 배의 공격력이 적용됩니다! 현재 공격력 : ${atk * 2}');
-      print('$name(이)가 ${monster.name}에게 ${atk * 2}의 피해를 입혔습니다!');
-    } else {
-      monster.hp = monster.hp - atk;
-      print('$name(이)가 ${monster.name}에게 $atk의 피해를 입혔습니다!');
+    switch (input) {
+      case 1:
+        attackMon(game!.currentMon);
+        break;
+      case 2:
+        defend();
+        break;
+      case 3:
+        atkDoubleTurn = game!.totalTurnCount + 1;
     }
   }
 
-  void defend() async {
-    print('$name(이)가 방어 태세를 취했습니다.');
+  ///공격 액션
+  void attackMon(Monster monster) {
+    int damage = atk - monster.def;
+    if (damage < 0) damage = 0;
+
+    ///현재 턴이 공격력 두 배 적용 턴이면 안내 메세지 출력
+    if (game!.totalTurnCount == atkDoubleTurn) {
+      print('아이템 효과 : 두 배의 공격력이 적용됩니다! 현재 공격력 : $atk');
+    }
+    monster.hp = monster.hp - damage;
+    print('$name(이)가 ${monster.name}에게 $damage의 피해를 입혔습니다!');
+  }
+
+  ///방어 액션
+  void defend() {
+    ///현재 totalTurnCount값을 defDoubleTurn에 넣음
+    defDoubleTurn = game!.totalTurnCount + 1;
+    print('$name(이)가 방어 태세를 취했습니다!');
+  }
+
+  ///아이템 사용 액션
+  void useItem() {
+    ///현재 totalTurnCount값을 atkDoubleTurn에 넣음
+    atkDoubleTurn = game!.totalTurnCount + 1;
+    print('공격력 증가 아이템을 사용했습니다!');
+    print('다음 턴에 공격력이 2배로 증가합니다.');
   }
 
   void showStatus() {
     print('$name - 체력 : $hp, 공격력 : $atk, 방어력 : $def');
   }
 
-  checkIsDead() {
+  void checkIsDead() {
     if (hp <= 0) {
       hp = 0;
-      return true;
-    } else {
-      return false;
+      isDead = true;
     }
   }
 }

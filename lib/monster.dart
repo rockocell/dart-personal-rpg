@@ -6,18 +6,37 @@ class Monster {
   int maxAtk;
   int atk = 0;
   int def = 0;
-  int countForMonDef = 1;
+  int monTurnCount = 1;
+
+  bool isDead = false;
 
   Monster(this.name, this.hp, this.maxAtk);
 
-  void attackChar(Character character) {
-    int damage = atk - character.def;
-    print('$name의 턴');
-    if (countForMonDef == 3) {
+  ///몬스터의 한 턴
+  void turnMonster(Character character) {
+    ///플레이어 상태 체크
+    character.checkPlayerStatus();
+
+    ///몬스터 상태 체크
+    checkMonsterStatus();
+    attackChar(character);
+    monTurnCount++;
+  }
+
+  void checkMonsterStatus() {
+    ///몬스터 3번째 턴마다 방어력 증가
+    if (monTurnCount == 3) {
       def += 2;
       print('$name의 방어력이 증가했습니다! 현재 방어력: $def');
-      countForMonDef = 1;
+      monTurnCount = 1;
     }
+  }
+
+  void attackChar(Character character) {
+    int damage = atk - character.def;
+    if (damage < 0) damage = 0;
+    print('$name의 턴');
+
     character.hp = character.hp - damage;
     print('$name(이)가 ${character.name}에게 $damage의 데미지를 입혔습니다!');
   }
@@ -26,12 +45,10 @@ class Monster {
     print('$name - 체력 : $hp, 공격력 : $atk');
   }
 
-  checkIsDead() {
+  void checkIsDead() {
     if (hp <= 0) {
       hp = 0;
-      return true;
-    } else {
-      return false;
+      isDead = true;
     }
   }
 }
