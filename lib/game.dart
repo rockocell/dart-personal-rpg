@@ -19,6 +19,8 @@ class Game {
   bool isStart = true;
   bool isEnd = false;
   bool isWin = false;
+  bool isCalledGame = false;
+  bool isPaused = false;
 
   ///게임 결과 관리
   String result = '';
@@ -105,6 +107,7 @@ class Game {
         if (isEnd) break;
         getRandomMon();
         battle();
+        if (isCalledGame) break;
         if (player.isDead) break;
 
         ///최종 승리수를 채웠다면 isEnd, isWin 값 변경 후 break;
@@ -116,6 +119,8 @@ class Game {
 
         ///승리수가 부족하다면 다음 몬스터와의 대결 의사 물음
         while (true) {
+          player.showStatus();
+          currentMon.showStatus();
           print('');
           print('다음 몬스터와 대결하시겠습니까? ( y / n )');
           var input = stdin.readLineSync(
@@ -126,6 +131,7 @@ class Game {
             break;
           } else if (input == 'n') {
             ///중단, 종료 => 상단의 for문으로 돌아가 if(isEnd)에서 break;
+            isPaused = true;
             isEnd = true;
             break;
           } else {
@@ -135,7 +141,7 @@ class Game {
           }
         }
       }
-      endGame(isEnd, isWin); //두 개의 bool값에 따라 각각 다른 게임 종료 멘트 출력
+      endGame(); // 조건별로 다른 게임 종료 로그를 출력하고 게임 저장 여부 묻는 메서드
       break;
     }
   }
@@ -157,11 +163,17 @@ class Game {
         ///몬스터 턴
         currentMon.turnMonster(player);
 
+        ///콜드게임 확인
+        checkCalledGame();
+        if (isCalledGame) break;
+
         ///플레이어, 몬스터 상태 출력
         player.showStatus();
         currentMon.showStatus();
       } else {
         ///몬스터 사망 시
+        print('');
+        print('${currentMon.name}을 처치했습니다!');
         monList.remove(currentMon);
         victory++;
         currentMon.monTurnCount = 1;
@@ -181,18 +193,33 @@ class Game {
   }
 
   ///게임 종료 메서드
-  void endGame(isEnd, isWin) {
-    if (isEnd) {
-      ///게임 결과에 따라 다른 메시지 출력
-      if (isWin) {
-        result = '승리';
-        print('');
-        print('축하합니다! 게임에서 승리했습니다.');
-      } else {
-        result = '패배';
-        print('');
-        print('패배했습니다.');
-      }
+  void endGame() {
+    if (isWin) {
+      result = '승리';
+      print('');
+      print('축하합니다! 게임에서 승리했습니다.');
+    }
+    if (isCalledGame) {
+      result = '패배';
+      print('');
+      print('${player.name}은 ${currentMon.name}을 상대하기엔 너무 약합니다...');
+      print(
+        '${player.name} 공격력 : ${player.atk}, ${currentMon.name} 방어력 : ${currentMon.def}',
+      );
+      print('');
+      print('패배했습니다.');
+    }
+    if (player.isDead) {
+      result = '패배';
+      print('');
+      print('${player.name}(이)가 사망했습니다..');
+      print('');
+      print('패배했습니다.');
+    }
+    if (isPaused) {
+      result = '중단';
+      print('');
+      print('게임을 중단했습니다.');
     }
 
     ///결과 저장 확인
@@ -237,6 +264,14 @@ class Game {
       player.hp += 10;
       print('');
       print('보너스 체력을 얻었습니다! 현재 체력: ${player.hp}');
+    }
+  }
+
+  ///플레이어 공격력이 몬스터 방어력보다 작아졌는지 확인
+  void checkCalledGame() {
+    if (player.atk <= currentMon.def) {
+      isCalledGame = true;
+      isEnd = true;
     }
   }
 }

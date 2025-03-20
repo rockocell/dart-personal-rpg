@@ -39,13 +39,14 @@ class Monster {
       damage = 0;
     } else if (damage > character.hp) {
       damage = character.hp;
+    } else if (damage >= 1) {
+      character.getInjured();
     }
     print('');
     print('$name의 턴');
 
     character.hp = character.hp - damage;
     print('$name(이)가 ${character.name}에게 $damage의 데미지를 입혔습니다!');
-    character.getInjured();
   }
 
   void showStatus() {
