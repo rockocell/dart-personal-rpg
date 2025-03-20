@@ -45,10 +45,11 @@ class Monster {
 
     character.hp = character.hp - damage;
     print('$name(이)가 ${character.name}에게 $damage의 데미지를 입혔습니다!');
+    character.getInjured();
   }
 
   void showStatus() {
-    print('$name - 체력 : $hp, 공격력 : $atk');
+    print('$name - 체력 : $hp, 공격력 : $atk, 방어력 : $def');
     print('─' * 50);
   }
 

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
+import 'dart:math';
 import 'package:pp_rpg_game/monster.dart';
 import 'package:pp_rpg_game/game.dart';
 
@@ -92,7 +93,7 @@ class Character {
     while (true) {
       print('');
       print('$name의 턴');
-      print('행동을 선택하세요: (1 : 공격, 2: 방어 , 3: 아이템 사용)');
+      print('행동을 선택하세요: (1 : 공격, 2: 방어, 3: 아이템 사용)');
       var input = stdin.readLineSync(encoding: Encoding.getByName('utf-8')!);
       if (input == '1') {
         return 1;
@@ -176,6 +177,16 @@ class Character {
   void checkIsDead() {
     if (hp <= 0) {
       isDead = true;
+    }
+  }
+
+  void getInjured() {
+    Random random = Random();
+    int chance = random.nextInt(10);
+    if (chance <= 0) {
+      atk -= 2;
+      print('');
+      print('$name(이)가 부상당했습니다! 공격력이 2 감소했습니다. ( 공격력 : $atk)');
     }
   }
 }
