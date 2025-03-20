@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:pp_rpg_game/monster.dart';
+import 'package:pp_rpg_game/game.dart';
 
 class Character {
   String name;
@@ -8,7 +9,17 @@ class Character {
   int atk;
   int def;
 
+  //Game 객체 불러오기 -- 기본 : null
+  Game? game;
+
   Character(this.name, this.hp, this.atk, this.def);
+
+  bool isItemUsed = false;
+
+  ///외부에서 생성된 Game 객체를 set 해주는 메서드
+  void setGame(Game gameInstance) {
+    game = gameInstance;
+  }
 
   void getName() {
     ///캐릭터 이름 입력
@@ -34,8 +45,20 @@ class Character {
   }
 
   void attackMon(Monster monster) {
-    monster.hp = monster.hp - atk;
-    print('$name(이)가 ${monster.name}에게 $atk의 피해를 입혔습니다!');
+    if (game == null) {
+      print('오류: Game 인스턴스가 설정되지 않았습니다.');
+      return;
+    }
+
+    ///현재 turnCount가 atkDoubleTurn과 동일하면 공격력 두 배 적용
+    if (game!.turnCount == game!.atkDoubleTurn) {
+      monster.hp = monster.hp - atk * 2;
+      print('아이템 효과 : 두 배의 공격력이 적용됩니다! 현재 공격력 : ${atk * 2}');
+      print('$name(이)가 ${monster.name}에게 ${atk * 2}의 피해를 입혔습니다!');
+    } else {
+      monster.hp = monster.hp - atk;
+      print('$name(이)가 ${monster.name}에게 $atk의 피해를 입혔습니다!');
+    }
   }
 
   void defend() async {

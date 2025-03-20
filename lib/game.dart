@@ -21,11 +21,14 @@ class Game {
   bool isWin = false;
 
   bool isPlayerDead = false;
+  int turnCount = 1;
 
   ///게임 결과 관리
   String result = '';
 
   Monster currentMon = Monster('', 1, 1);
+
+  int atkDoubleTurn = 0;
 
   ///class 내부 변수 선언 끝
   ///
@@ -146,6 +149,22 @@ class Game {
       } else if (input == '2') {
         player.defend();
         break;
+      }
+      ///캐릭터 아이템 사용 기능 추가
+      else if (input == '3') {
+        ///아이템이 이미 사용됐는지 확인
+        if (!player.isItemUsed) {
+          player.isItemUsed = true;
+
+          ///다음 턴에서 공격력 2배 적용
+          atkDoubleTurn = turnCount + 1;
+          print('공격력 증가 아이템을 사용했습니다!');
+          print('다음 턴에 공격력이 2배로 증가합니다.');
+          break;
+        } else {
+          print('아이템이 이미 사용되었습니다!');
+          continue;
+        }
       } else {
         print('입력형식이 올바르지 않습니다.');
         continue;
@@ -155,9 +174,10 @@ class Game {
 
   ///한 번의 전투를 구현하는 메서드
   ///
-  Future<void> battle() async {
+  void battle() async {
     while (true) {
-      checkAction(); //플레이어의 입력 받아 공격/방어 실행
+      checkAction();
+      turnCount++; //플레이어의 입력 받아 공격/방어 실행
       ///몬스터 상태 체크 -- 몬스터가 죽었으면 리스트에서 제거, 승리 횟수 증가, break
       if (currentMon.checkIsDead()) {
         monList.remove(currentMon);
@@ -174,7 +194,6 @@ class Game {
         break;
       }
 
-      ///여기까지 코드가 진행되면 한 턴이 완료됨
       ///showStatus로 턴 결과 출력
       player.showStatus();
       currentMon.showStatus();
