@@ -158,6 +158,7 @@ class Character {
     ///현재 totalTurnCount값을 defDoubleTurn에 넣음
     defDoubleTurn = game!.totalTurnCount + 1;
     print('$name(이)가 방어 태세를 취했습니다!');
+    print('다음 턴에 방어력이 2배로 증가합니다.');
   }
 
   ///아이템 사용 액션

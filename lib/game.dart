@@ -17,10 +17,9 @@ class Game {
 
   //게임의 상태 관리
   bool isStart = true;
-  bool isEnd = false;
   bool isWin = false;
-  bool isCalledGame = false;
   bool isPaused = false;
+  bool isCalledGame = false;
 
   ///게임 결과 관리
   String result = '';
@@ -104,15 +103,14 @@ class Game {
 
       ///최종 승리수를 채울 때까지 전투(battle()) 반복
       for (victory; victory <= requiredVictory;) {
-        if (isEnd) break;
+        if (isPaused) break;
         getRandomMon();
         battle();
         if (isCalledGame) break;
         if (player.isDead) break;
 
-        ///최종 승리수를 채웠다면 isEnd, isWin 값 변경 후 break;
+        ///최종 승리수를 채웠다면 isWin 값 변경 후 break;
         if (victory == requiredVictory) {
-          isEnd = true;
           isWin = true;
           break;
         }
@@ -130,9 +128,8 @@ class Game {
             ///계속 => 상단의 for문으로 돌아가 다시 battle()실행
             break;
           } else if (input == 'n') {
-            ///중단, 종료 => 상단의 for문으로 돌아가 if(isEnd)에서 break;
+            ///중단, 종료 => 상단의 for문으로 돌아가 break;
             isPaused = true;
-            isEnd = true;
             break;
           } else {
             print('');
@@ -271,7 +268,6 @@ class Game {
   void checkCalledGame() {
     if (player.atk <= currentMon.def) {
       isCalledGame = true;
-      isEnd = true;
     }
   }
 }
