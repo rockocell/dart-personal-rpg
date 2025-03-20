@@ -27,6 +27,7 @@ class Monster {
     ///몬스터 3번째 턴마다 방어력 증가
     if (monTurnCount == 3) {
       def += 2;
+      print('');
       print('$name의 방어력이 증가했습니다! 현재 방어력: $def');
       monTurnCount = 1;
     }
@@ -34,7 +35,12 @@ class Monster {
 
   void attackChar(Character character) {
     int damage = atk - character.def;
-    if (damage < 0) damage = 0;
+    if (damage < 0) {
+      damage = 0;
+    } else if (damage > character.hp) {
+      damage = character.hp;
+    }
+    print('');
     print('$name의 턴');
 
     character.hp = character.hp - damage;
@@ -43,11 +49,11 @@ class Monster {
 
   void showStatus() {
     print('$name - 체력 : $hp, 공격력 : $atk');
+    print('─' * 50);
   }
 
   void checkIsDead() {
     if (hp <= 0) {
-      hp = 0;
       isDead = true;
     }
   }

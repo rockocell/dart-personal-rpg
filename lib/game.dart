@@ -55,6 +55,7 @@ class Game {
 
       ///플레이어 기본정보 적용 완료
     } catch (e) {
+      print('');
       print('Error: $e');
     }
   }
@@ -115,6 +116,7 @@ class Game {
 
         ///승리수가 부족하다면 다음 몬스터와의 대결 의사 물음
         while (true) {
+          print('');
           print('다음 몬스터와 대결하시겠습니까? ( y / n )');
           var input = stdin.readLineSync(
             encoding: Encoding.getByName('utf-8')!,
@@ -127,6 +129,7 @@ class Game {
             isEnd = true;
             break;
           } else {
+            print('');
             print('입력형식이 올바르지 않습니다.');
             continue;
           }
@@ -169,9 +172,11 @@ class Game {
 
   ///랜덤 몬스터를 currenMonster 객체로 지정
   void getRandomMon() {
+    print('');
     print('새로운 몬스터가 나타났습니다!');
     int currentMonIndex = Random().nextInt(monList.length);
     currentMon = monList[currentMonIndex];
+    print('');
     print('${currentMon.name} - 체력: ${currentMon.hp}, 공격력: ${currentMon.atk}');
   }
 
@@ -181,29 +186,31 @@ class Game {
       ///게임 결과에 따라 다른 메시지 출력
       if (isWin) {
         result = '승리';
+        print('');
         print('축하합니다! 게임에서 승리했습니다.');
       } else {
         result = '패배';
+        print('');
         print('패배했습니다.');
       }
+    }
 
-      ///결과 저장 확인
-      while (true) {
-        print('결과를 저장하시겠습니까? ( y / n )');
-        var input = stdin.readLineSync(encoding: Encoding.getByName('utf-8')!);
-        if (input == 'y') {
-          saveResult();
-          break;
-        } else if (input == 'n') {
-          print('저장하지 않습니다.');
-          break;
-        } else {
-          print('입력형식이 올바르지 않습니다.');
-          continue;
-        }
+    ///결과 저장 확인
+    while (true) {
+      print('');
+      print('결과를 저장하시겠습니까? ( y / n )');
+      var input = stdin.readLineSync(encoding: Encoding.getByName('utf-8')!);
+      if (input == 'y') {
+        saveResult();
+        break;
+      } else if (input == 'n') {
+        print('');
+        print('저장하지 않습니다.');
+        break;
+      } else {
+        print('입력형식이 올바르지 않습니다.');
       }
-      print('게임을 종료합니다.');
-    } else {}
+    }
   }
 
   ///결과를 파일로 저장하는 메서드
@@ -218,6 +225,7 @@ class Game {
       mode: FileMode.write,
       encoding: Encoding.getByName('utf-8')!,
     );
+    print('');
     print('결과가 저장되었습니다.');
   }
 
@@ -227,6 +235,7 @@ class Game {
     int chance = random.nextInt(10);
     if (chance <= 2) {
       player.hp += 10;
+      print('');
       print('보너스 체력을 얻었습니다! 현재 체력: ${player.hp}');
     }
   }

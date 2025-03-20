@@ -52,7 +52,7 @@ class Character {
   ///플레이어의 한 턴
   void turnPlayer() {
     checkPlayerStatus();
-    executePlayerAction(() => getPlayerInput()); //입력에 따른 플레이어 액션 실행
+    executePlayerAction(() => getInputInt()); //입력에 따른 플레이어 액션 실행
     game!.totalTurnCount++;
   }
 
@@ -88,8 +88,9 @@ class Character {
   }
 
   ///유저 입력 확인 -- return 값: 1 or 2 or 3 (int 타입)
-  getPlayerInput() {
+  getInputInt() {
     while (true) {
+      print('');
       print('$name의 턴');
       print('행동을 선택하세요: (1 : 공격, 2: 방어 , 3: 아이템 사용)');
       var input = stdin.readLineSync(encoding: Encoding.getByName('utf-8')!);
@@ -136,10 +137,15 @@ class Character {
   ///공격 액션
   void attackMon(Monster monster) {
     int damage = atk - monster.def;
-    if (damage < 0) damage = 0;
+    if (damage < 0) {
+      damage = 0;
+    } else if (damage > monster.hp) {
+      damage = monster.hp;
+    }
 
     ///현재 턴이 공격력 두 배 적용 턴이면 안내 메세지 출력
     if (game!.totalTurnCount == atkDoubleTurn) {
+      print('');
       print('아이템 효과 : 두 배의 공격력이 적용됩니다! 현재 공격력 : $atk');
     }
     monster.hp = monster.hp - damage;
@@ -162,12 +168,13 @@ class Character {
   }
 
   void showStatus() {
+    print('');
+    print('─' * 50);
     print('$name - 체력 : $hp, 공격력 : $atk, 방어력 : $def');
   }
 
   void checkIsDead() {
     if (hp <= 0) {
-      hp = 0;
       isDead = true;
     }
   }
