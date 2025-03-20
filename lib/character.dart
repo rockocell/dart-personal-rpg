@@ -128,7 +128,8 @@ class Character {
         defend();
         break;
       case 3:
-        atkDoubleTurn = game!.totalTurnCount + 1;
+        useItem();
+        break;
     }
   }
 
