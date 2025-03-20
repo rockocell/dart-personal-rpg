@@ -31,7 +31,6 @@ class Game {
   int totalTurnCount = 1;
   int atkDoubleTurn = 0;
   bool isItemUsed = false;
-  int countForMonDef = 1;
 
   ///class 내부 변수 선언 끝
   ///
@@ -179,17 +178,25 @@ class Game {
   ///
   void battle() async {
     while (true) {
+      ///플레이어의 입력값 확인 및 입력에 따른 메서드 실행
       checkAction();
-      totalTurnCount++; //플레이어의 입력 받아 공격/방어 실행
-      ///몬스터 상태 체크 -- 몬스터가 죽었으면 리스트에서 제거, 승리 횟수 증가, break
+
+      ///플레이어 턴이 끝나면 totalTurnCount 증가
+      totalTurnCount++;
+
+      ///몬스터 상태 체크 -- 몬스터가 죽었으면 리스트에서 제거, 승리 횟수 증가, 몬스터 턴 카운트 초기화, break
       if (currentMon.checkIsDead()) {
         monList.remove(currentMon);
         victory++;
+        currentMon.countForMonDef = 1;
         break;
       } else {
         //몬스터 살았으면 몬스터 턴
         currentMon.attackChar(player);
       }
+
+      ///몬스터 턴 끝나면 countForMonDef 증가
+      currentMon.countForMonDef++;
 
       ///플레이어 상태 체크 -- 플레이어가 죽었으면 isDead 관리, break
       if (player.checkIsDead()) {
