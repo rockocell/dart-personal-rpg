@@ -63,6 +63,9 @@ Flutter 앱개발반에서 진행한 두 번째 개인과제 프로젝트입니�
 - 몬스터가 캐릭터를 공격하더라도 데미지가 없으면 부상을 입히지 못한다.
 - `Random함수`를 이용해 확률 기능을 사용한다.
 
+**[ 실행 예시 ]**
+<img src = "https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbfd9Nu%2FbtsMQDxIhmi%2F5c1DERKmtJrUPuyU7Ma9FK%2Fimg.png">
+
 ### 캐릭터의 공격력이 몬스터의 방어력보다 작거나 같을 때 게임을 종료시키는 기능
 **[ 설명 ]**
 
@@ -72,6 +75,7 @@ Flutter 앱개발반에서 진행한 두 번째 개인과제 프로젝트입니�
 
 **[ 조건 ]**
 - 캐릭터의 공격력이 몬스터의 방어력보다 작아지는 기점을 체크하여 게임을 종료시킨다.
+- <img src = "https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2F0q6Sm%2FbtsMQSg7rHu%2FbKoOcMkG0gO5mYurSQxWVK%2Fimg.png">
 
 ### 게임 종료 분기에 따라 다른 엔딩 로그 출력 기능 추가
 **[ 설명 ]**
